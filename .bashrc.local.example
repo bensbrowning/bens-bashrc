@@ -1,0 +1,40 @@
+#!/sbin/sh
+#
+## Maintained by Ben Browning <benb@bensbrowning.com>
+# EXAMPLE local host config. Rename to .bashrc.local and make local changes here.
+#
+
+case "$1" in
+############## PRE runs before the main .bashrc
+pre)
+
+	;;
+
+############## POST runs after the main .bashrc
+post)
+	## ssh autocompletion by known_hosts
+	SSH_COMPLETE=( $(cat ~/.ssh/known_hosts | cut -f 1 -d " " | \sed -e s/,.*//g | uniq ) ); 
+	complete -o default -W "${SSH_COMPLETE[*]}" ssh
+
+	## Sometimes we like local scripts
+	#export PATH=$PATH:~/bin
+
+	## Aliases to make screens pop up for reconnection by the aliases 
+	## presented below. This, with ssh keys, is very cool- 1 alias
+	## on your local box sshes and reconnects to your screen session
+	## No more forgotten screen orphans!
+	alias s1="screen -rd one"
+	alias s2="screen -rd two"
+	alias s3="screen -rd three"
+	alias s4="screen -rd four"
+
+	## uncomment these and make SSH keys if you want to reconnect to a
+	## certain host via screen from a simple alias.
+	## 'ssh-agent bash' can be obviated if you don't store keys
+	## on that host- it's on for me because I use this with my jumphosts
+	#alias foo1="ssh foo.bar.com -t 'screen -Rd one ssh-agent bash'"
+	#alias foo2="ssh foo.bar.com -t 'screen -Rd two ssh-agent bash'"
+	#alias foo3="ssh foo.bar.com -t 'screen -Rd three ssh-agent bash'"
+	#alias foo4="ssh foo.bar.com -t 'screen -Rd four ssh-agent bash'"
+	;;
+esac
