@@ -472,10 +472,21 @@ if [[ $OSTYPE == solaris* ]]; then
 fi # end solaris function
 
 # todo - put ninas auto reconnect here
-#bssh() {
-#      local ssh_host=${1}
-#      for (( ; ; )) do ssh $ssh_host -t "screen -Rd $id" && break || (echo SSH no worky to $ssh_host, sleeping ; sleep 30) ; done
-#}
+bssh() {
+      local ssh_host=${1}
+      local ssh_screen_id=${2}
+      if [ $ssh_host && $ssh_screen_id ]
+        then
+        for (( ; ; )) do ssh $ssh_host -t "screen -Rd $ssh_screen_id" && break || (echo SSH no worky to $ssh_host, sleeping ; sleep 30) ; done
+      elif [ $ssh_host ]
+        then
+	ssh_screen_id='`screen -ls | grep Detached | awk "{ print $1 }" | head -n1`'
+        for (( ; ; )) do ssh $ssh_host -t "screen -Rd $ssh_screen_id" && break || (echo SSH no worky to $ssh_host, sleeping ; sleep 30) ; done
+      else
+        echo Usage: $0 host [screen_id]
+        echo sshs to the host and attaches to the screen ID specified, or the first detached screen
+      fi
+}
 
 ######################################################################
 # Make the last call on the local settings file {{{1

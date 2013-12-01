@@ -78,4 +78,7 @@ echo "running ssh connect"
 	fi
 }
 
-ssh_connect
+if [-f "~/.bashrc.autossh"] 
+  then 
+  ssh_connect
+fi
