@@ -1,0 +1,18 @@
+#!/sbin/sh
+#
+## Maintained by Ben Browning <benb@bensbrowning.com>
+# EXAMPLE autossh config. Rename to .bashrc.autossh and make local changes here.
+# Doing so will enable autossh
+#
+
+# Map window/tab/pane names to given hosts.
+emu="w4t2p0"
+wombat="wt13p0 w1"
+downside="w3t0p0"
+home="w0t0p1 w1 w0t1 w0"
+
+### Session Operation Array ###
+### This is an array of each session name we want to operate on, referenced fro$
+session_arr=(emu, wombat, downside, b3unixadm01, home)
+
+. ./.bashrc.includes/iterm-auto-ssh.sh
