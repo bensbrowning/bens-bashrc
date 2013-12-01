@@ -1,10 +1,22 @@
-## Maintained by Ben Browning <benb@bensbrowning.com>
 ######################################################################
 # COMMENTS & DOCUMENTATION {{{1
 ######################################################################
 # NOTE!!!! Don't make changes to this file for a single machine. Use
 # .bashrc.local. See "Local Customisations" below.
-# This file should be as cross-platform as possible
+######################################################################
+# General {{{2
+######################################################################
+# This file is designed on the assumption that bash is NOT our login
+# shell. If it was then the env variable setting should be in the
+# .bash_profile file, not the .bashrc. I've made a special effort to keep
+# the number of external calls to a minimum, since it was getting to the
+# point that it would take 5 seconds to fire up bash on an Sun Ultra 10!
+# As a result, there are some unusual constructs in here. There are still
+# some external calls left (e.g. calls to sed) but they are not in loops
+# and I doubt they make that much difference to performance.
+#
+######################################################################
+# Local Customisations {{{2
 ######################################################################
 # It's best not to change this file on a machine-by-machine basis. For
 # local extensions this file calls ~/.bashrc.local if it exists. It's
@@ -44,6 +56,29 @@
 #                                       non-existant servers may cause
 #                                       this script to appear to hang
 #
+######################################################################
+# TODO: {{{2
+######################################################################
+#   It seems that I'm constantly adding new features that leap-frog the
+#   TODO list below, so this is really a SHOULDDO list, but for what it's
+#   worth:
+#     - surround the ENV var and other once-only stuff with a big if,
+#       testing $0 or something for login-shellness then call this file
+#       from /.bash_profile with something like:
+#       [ -f ~/.bashrc ] && . /.bashrc
+#     - Policy question: Should stuff in the /usr/local tree be used in
+#       preference to stuff in system directories like /usr/bin? At the
+#       moment the path has the /usr/local stuff later. That means that a
+#       newer version of software installed there won't get used.
+#
+######################################################################
+# Folding {{{2
+######################################################################
+# The funny comments in this file, made from braces, like the ones before
+# this paragraph, are for vim's folding mode. They make navigation in the
+# file a lot easier  Unfortunately they require vim version >= 6.0. See
+# ":help folding" in vim for more info. They should't affect any other
+# editor, just think of them as marking the start and end of sections.
 ######################################################################
 
 ######################################################################
@@ -436,6 +471,12 @@ if [[ $OSTYPE == solaris* ]]; then
 
 fi # end solaris function
 
+
+bssh() {
+      local ssh_host=${1}
+      for (( ; ; )) do ssh $ssh_host -t "screen -Rd $id" && break || (echo SSH no worky to $ssh_host, sleeping ; sleep 30) ; done
+}
+
 ######################################################################
 # Make the last call on the local settings file {{{1
 ######################################################################
@@ -450,3 +491,11 @@ unset _running_X
 unset _debugging
 
 
+######################################################################
+# Clean up {{{1
+######################################################################
+# Run autossh if configured
+if [ -f ~/.bashrc.autossh ]
+then
+  ssh_connect
+fi
