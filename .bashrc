@@ -471,11 +471,11 @@ if [[ $OSTYPE == solaris* ]]; then
 
 fi # end solaris function
 
-
-bssh() {
-      local ssh_host=${1}
-      for (( ; ; )) do ssh $ssh_host -t "screen -Rd $id" && break || (echo SSH no worky to $ssh_host, sleeping ; sleep 30) ; done
-}
+# todo - put ninas auto reconnect here
+#bssh() {
+#      local ssh_host=${1}
+#      for (( ; ; )) do ssh $ssh_host -t "screen -Rd $id" && break || (echo SSH no worky to $ssh_host, sleeping ; sleep 30) ; done
+#}
 
 ######################################################################
 # Make the last call on the local settings file {{{1
@@ -497,5 +497,5 @@ unset _debugging
 # Run autossh if configured
 if [ -f ~/.bashrc.autossh ]
 then
-  ssh_connect
+ . ~/.bashrc.autossh
 fi
