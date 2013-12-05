@@ -13,7 +13,10 @@
 # screen for that window/tab/pane
 
 # Debugging var, for debug output
-_debugging=1
+#_debugging=1
+
+## autossh_config file with host-id key pairs ##
+autossh_config=~/.bashrc.autossh
 
 ##################### DEPENDENCIES: #######################################
 # - Must use/src bssh function snippet from bashrc.snippet.               #
@@ -24,17 +27,15 @@ _debugging=1
 
 
 autossh_init(){
-## config file with host-id key pairs ##
-config=~/.bashrc.autossh
 
 ## source in our bssh function when this is run in standalone ##
-[[ $(type bssh | grep -q 'is a function$') ]] || . ~/.bashrc.includes/PRE-*-bssh.sh
+[[ $(type bssh | grep -q 'is a function$') ]] || { echo bssh not found, sourcing ~/.bashrc.includes/PRE-\*-bssh.sh ; . ~/.bashrc.includes/PRE-*-bssh.sh ; }
 
-if [[ -f $config ]]; then
-	. ${config}
+if [[ -f $autossh_config ]]; then
+	. ${autossh_config}
 	ssh_connect
 else
-	echo "can't find config file at $config"
+	[[ -n $_debugging ]] && echo "can't find autossh_config file at $autossh_config"
 	return 1
 fi
 }
@@ -63,16 +64,16 @@ ssh_connect() {
 
 	## indirectly reference session variable, to pull out session id list ##
 	session_ids=( ${!session} )
-	[[ $_debugging ]] && echo "session array ids: ${session_ids[*]} "
+	[[ $_debugging ]] && echo " session array ids: ${session_ids[*]} "
 
 	## iterate over session id's for defined host/session, and check against current session ID ##
 	for session_id in ${session_ids[*]};
 	do
-	[[ $_debugging ]] && echo "session id: $session_id"
-		if echo $wtpid | grep $session_id || {
-			echo $wtid | grep $session_id
+	[[ $_debugging ]] && echo " session id: $session_id"
+		if echo $wtpid | grep -q $session_id || {
+			echo $wtid | grep -q $session_id
 			} || { 
-			echo $wid | grep $session_id
+			echo $wid | grep -q $session_id
 			}; 
 		then
 			ssh_host=$session
@@ -85,7 +86,7 @@ ssh_connect() {
 		[[ $_debugging ]] && echo "Set session to ${ssh_host} with id ${id} - spawning ssh connect"
 		break
 	else
-		echo "host $session doesn't match this iterm session ID"
+		[[ $_debugging ]] && echo "host $session doesn't match this iterm session ID"
 	fi
 done
 
@@ -103,7 +104,7 @@ fi
 	if [[ -n $ssh_host ]] ; then
 		bssh ${ssh_host} ${id}
 	else
-		echo "No host defined for $id"
+		[[ -n $_debugging ]] && echo "No host defined for $id"
 	fi
 }
 
