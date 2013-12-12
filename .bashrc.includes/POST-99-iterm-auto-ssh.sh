@@ -1,5 +1,5 @@
 #!/bin/bash
-# Written by thelinuxgirl
+# Written by thelinuxgirl, hacked on by bensbrowning
 # https://github.com/thelinuxgirl/iterm-auto-ssh/
 # Auto-ssh - auto ssh to defined hosts based on iterm session ID's #
 # Mac Iterm2 users
@@ -29,7 +29,7 @@ autossh_config=~/.bashrc.autossh
 autossh_init(){
 
 ## source in our bssh function when this is run in standalone ##
-[[ $(type bssh | grep -q 'is a function$') ]] || { echo bssh not found, sourcing ~/.bashrc.includes/PRE-\*-bssh.sh ; . ~/.bashrc.includes/PRE-*-bssh.sh ; }
+[[ $(type bssh | grep -q 'is a function$') ]] || { [[ -n $_debugging ]] && echo bssh not found, sourcing ~/.bashrc.includes/PRE-\*-bssh.sh ; . ~/.bashrc.includes/PRE-*-bssh.sh ; }
 
 if [[ -f $autossh_config ]]; then
 	. ${autossh_config}
